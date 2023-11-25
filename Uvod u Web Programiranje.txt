@@ -470,9 +470,129 @@ void N3D5() {
         printf("\n");
     }
 }
+---------------------------------------------------------------------
+klk1 datum zadatak
+#include <stdio.h>
+//Zadatak 1
+void unos(int& d, int& m, int& g) {
+    scanf_s("%d%d%d", &d, &m, &g);
+}
+
+bool prestupnaGodina(int g) {
+    if ((g % 4 == 0 && g % 100 != 0) || g % 400 == 0) return true;
+    return false;
+}
+
+int kolikoDanaImaMesec(int m, int g) {
+    switch (m) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        return 31;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        return 30;
+    case 2:
+        if (prestupnaGodina(g))
+            return 29;
+        return 28;
+    }
+}
+
+void juce(int& d, int& m, int& g) {
+    d--;
+    if (d <= 0) {
+        m--;
+        if (m <= 0) {
+            m = 12;
+            g--;
+        }
+        d = kolikoDanaImaMesec(m, g);
+    }
+}
+
+bool validnost(int d, int m, int g) {
+    if (g < 0) return false;
+    if (m < 1 || m > 12) return false;
+    if (d < 1 || d > kolikoDanaImaMesec(m, g)) return false;
+    return true;
+}
+
+int funkcija(int d1, int m1, int g1, int d2, int m2, int g2) {
+    if (!validnost(d1, m1, g1) || !validnost(d2, m2, g2)) {
+        printf("Datum nije validan");
+        return -1;
+    }
+    int i = 0;
+    while (true) {
+        if (d1 == d2 && m1 == m2 && g1 == g2) break;
+        juce(d1, m1, g1);
+        i++;
+    }
+    return i;
+}
+
+int main() {
+    int d1, m1, g1;
+    unos(d1, m1, g1);
+    int d2, m2, g2;
+    unos(d2, m2, g2);
+
+    if (g2 > g1 || (g2 == g1 && m2 > m1) || (d2 > d1 && m2 == m1 && g2 == g1)) printf("Prvi datum je manji od drugog.");
+
+    else printf("%d", funkcija(d1, m1, g1, d2, m2, g2));
 
 
+    return 0;
+}
 
+-------------------------------------------------------------
+klk2 neopadajuci niz
+#include <stdio.h>
+//Zadatak 2
+bool neopadajuciNizCifara(int br) {
+    while (br > 9) {
+        if (br % 10 < (br / 10) % 10)
+            return false;
+        br /= 10;
+    }
+    return true;
+}
+
+bool neopadajuciNizCifaraRekurzivno(int br) {
+    if (br < 10) return true;
+
+    if (br % 10 < (br / 10) % 10) return false;
+
+    return neopadajuciNizCifaraRekurzivno(br / 10);
+}
+
+int sumKub(int br) {
+    if (br ==  0) return 0;
+    return ((br % 10) * (br % 10) * (br % 10)) + sumKub(br / 10);
+}
+
+int main() {
+    int n, k;
+    scanf_s("%d%d", &n, &k);
+
+    for (int i = 100; i < k; i++) {
+        if (neopadajuciNizCifaraRekurzivno(i) && neopadajuciNizCifaraRekurzivno(sumKub(i))) {
+            printf("%d ", i);
+            printf("%d\n", sumKub(i));
+            n--;
+            if (n <= 0) break;
+        }
+    }
+
+    return 0;
+}
 
 
 

@@ -1,44 +1,4 @@
-nadalji dal ima jednu nulu u binarni
-#include <stdio.h>
-#include <math.h>
-//Zadatak 1
-int main() {
 
-    int n, k;
-    scanf_s("%d%d", &n, &k);
-
-
-    for (int i = 1; i <= k; i++) {
-        if (n == 0)
-            break;
-        int tren_broj = i;
-        int br_nule = 0;
-        bool prost = true;
-        while (tren_broj > 0) {
-            if (tren_broj % 2 == 0)
-                br_nule++;
-            tren_broj /= 2;
-            if (br_nule > 1) {
-                br_nule = 0;
-                break;
-            }
-        }
-
-        if (i != 2)
-            for (int j = 2; j <= sqrt(i); j++)
-                if (i % j == 0) {
-                    prost = false;
-                    break;
-                }
-
-        if (br_nule == 1 && prost) {
-            printf("%d\n", i);
-            n--;
-        }
-    }
-
-    return 0;
-}
 ---------------------------------------------------------------------------------------------
 onaj sto ga ja radi
 #include <stdio.h>
@@ -255,120 +215,8 @@ int main() {
 
     return 0;
 }
-------------------------------------------------------------------------------------------
-//bratski zadatak sa bratski brojevi (3.)
-#include <stdio.h>
-#include <math.h>
-//Zadatak 3 ;(
-int sumaDelioca(int n) {
-    int s = 1;
-    for (int i = 2; i <= sqrt(n); i++) {
-        if (n % i == 0)
-            s += i + (n / i);
-    }
-    return s;
-}
 
-int main() {
-    int prethodni = 0;
-    for (int i = 1; i <= 10000; i++) {
-        for (int j = 1; j <= 10000; j++) {
-            if (i == j) continue;
-            if (i == sumaDelioca(j) && j == sumaDelioca(i) && j != prethodni) {
-                prethodni = i;
-                printf("i = %d j = %d\n", i, j);
-            }
-        }
-    }
-
-    return 0;
-}
 ----------------------------------------------------------
-#include <stdio.h>
-#include <math.h>
-//Zadatak 5
-void upis(int& realni1, int& imaginarni1, int& realni2, int& imaginarni2) {
-    printf("Unesi prvi kompleksni broj:\n");
-    printf("Unesi realni deo: ");
-    scanf_s("%d", &realni1);
-    printf("Unesi imaginarni deo: ");
-    scanf_s("%d", &imaginarni1);
-    printf("Unesi drugi kompleksni broj:\n");
-    printf("Unesi realni deo: ");
-    scanf_s("%d", &realni2);
-    printf("Unesi imaginarni deo: ");
-    scanf_s("%d", &imaginarni2);
-}
-
-void ispis(int realni, int imaginarni) {
-    if (imaginarni > 0)
-        if (realni != 0)
-            printf("%d + %di\n", realni, imaginarni);
-        else
-            printf("%di\n", imaginarni);
-    if (imaginarni < 0)
-        if (realni != 0)
-            printf("%d - %di\n", realni, abs(imaginarni));
-        else
-            printf("%di\n", imaginarni);
-    if (imaginarni == 0)
-        printf("%d\n", realni);
-}
-
-void ispis_f(float realni, float imaginarni) {
-    if (imaginarni > 0)
-        if (realni != 0)
-            printf("%f + %fi\n", realni, imaginarni);
-        else
-            printf("%fi\n", imaginarni);
-    if (imaginarni < 0)
-        if (realni != 0)
-            printf("%f - %fi\n", realni, fabs(imaginarni));
-        else
-            printf("%fi\n", imaginarni);
-    if (imaginarni == 0)
-        printf("%f\n", realni);
-}
-
-void zbir(int realni1, int imaginarni1, int realni2, int imaginarni2, int& zbirR, int& zbirI) {
-    zbirR = realni1 + realni2;
-    zbirI = imaginarni1 + imaginarni2;
-}
-
-void razlika(int realni1, int imaginarni1, int realni2, int imaginarni2, int& razlikaR, int& razlikaI) {
-    razlikaR = realni1 - realni2;
-    razlikaI = imaginarni1 - imaginarni2;
-}
-
-void proizvod(int realni1, int imaginarni1, int realni2, int imaginarni2, int& proizvodR, int& proizvodI) {
-    proizvodR = (realni1 * realni2) - (imaginarni1 * imaginarni2);
-    proizvodI = (realni1 * realni2) + (imaginarni1 * imaginarni2);
-}
-
-void kolicnik(int realni1, int imaginarni1, int realni2, int imaginarni2, float& kolicnikR, float& kolicnikI) {
-    kolicnikR = (((realni1 * realni2) + (imaginarni1 * imaginarni2)) / (pow(realni2, 2) + pow(imaginarni2, 2)));
-    kolicnikI = (((realni1 * realni2) - (imaginarni1 * imaginarni2)) / (pow(realni2, 2) + pow(imaginarni2, 2)));
-}
-
-int main() {
-    int imaginarni1, realni1, imaginarni2, realni2;
-    int zbirI, zbirR, razlikaI, razlikaR, proizvodI, proizvodR;
-    float kolicnikI, kolicnikR;
-
-    upis(realni1, imaginarni1, realni2, imaginarni2);
-
-    zbir(realni1, imaginarni1, realni2, imaginarni2, zbirR, zbirI);
-    razlika(realni1, imaginarni1, realni2, imaginarni2, razlikaR, razlikaI);
-    proizvod(realni1, imaginarni1, realni2, imaginarni2, proizvodR, proizvodI);
-    kolicnik(realni1, imaginarni1, realni2, imaginarni2, kolicnikR, kolicnikI);
-
-    ispis(zbirR, zbirI);
-    ispis(razlikaR, razlikaI);
-    ispis(proizvodR, proizvodI);
-    ispis_f(kolicnikR, kolicnikI);
-
-    return 0;
-}
 -------------------------------------------------------------------------------------------------------
 NEDELJA 6
 ----------------------------------------------------
@@ -593,6 +441,24 @@ int main() {
 
     return 0;
 }
+--------------------------------------------------------------
+int Number, FirstDigit, DigitsCount, LastDigit, a, b, SwapNum;
+ 
+  	printf("\n Please Enter any Number that you wish  : ");
+  	scanf("%d", & Number);
+  	
+  	DigitsCount = log10(Number); 	
+  	FirstDigit = Number / pow(10, DigitsCount);
+  	
+  	LastDigit = Number % 10;
+  	
+  	a = FirstDigit * (pow(10, DigitsCount));
+  	b = Number % a;
+  	Number = b / 10;
+  	
+  	SwapNum = LastDigit * (pow(10, DigitsCount)) + (Number * 10 + FirstDigit);
+	    
+	printf(" \n The Number after Swapping First Digit and Last Digit =  %d", SwapNum);
 
 
 

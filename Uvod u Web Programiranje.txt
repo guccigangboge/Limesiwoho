@@ -1,37 +1,5 @@
 
----------------------------------------------------------------------------------------------
-onaj sto ga ja radi
-#include <stdio.h>
-#include <math.h>
-//Zadatak 3
-int main() {
-    int n, k;
-    scanf_s("%d%d", &n, &k);
 
-    for (int i = 1; i <= k; i++) {
-        if (n <= 0) break;
-        int nule = 0, jedinice = 0;
-        int br = i;
-        int sum = 1;
-        for (int j = 2; j <= sqrt(i); j++) {
-            if (i % j == 0) sum += j + (i / j);
-        }
-        if (sum == br) {
-            while (br > 0) {
-                if (br % 2 == 0) nule++;
-                jedinice += br % 2;
-                br /= 2;
-            }
-            if (jedinice > nule) {
-                printf("%d\n", i);
-                n--;
-            }
-        }
-    }
-
-
-    return 0;
-}
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 sinus
 #include <stdio.h>
@@ -459,6 +427,58 @@ int Number, FirstDigit, DigitsCount, LastDigit, a, b, SwapNum;
   	SwapNum = LastDigit * (pow(10, DigitsCount)) + (Number * 10 + FirstDigit);
 	    
 	printf(" \n The Number after Swapping First Digit and Last Digit =  %d", SwapNum);
+
+-----------------------------------------------------------
+zvezdice onaj dijamant
+
+#include <stdio.h>
+
+int main() {
+    int n, brojzvezdica = 1,brojspejsa;
+
+    printf("n je koliko:");
+    scanf_s("%d", &n);
+    brojspejsa = n * 2 - 1;
+    //povecaj
+    for (int i = 0; i < n; i++)
+    {
+        for (int i = 0; i < brojspejsa/2; i++)
+        {
+            printf(" ");
+        }
+        for (int i = 0; i < brojzvezdica; i++)
+        {
+            printf("*");
+        }
+        printf("\n");
+        brojzvezdica += 2;
+        brojspejsa -= 2;
+    }
+    brojspejsa += 2;
+    brojzvezdica -= 2;
+    //Smanji
+    for (int i = n; i > 0; i--)
+    {
+        brojzvezdica -= 2;
+        brojspejsa += 2;
+        for (int i = 0; i < brojspejsa/2; i++)
+        {
+            printf(" ");
+        }
+        for (int i = 0; i < brojzvezdica; i++)
+        {
+            printf("*");
+        }
+        printf("\n");
+        
+    }
+
+
+
+
+
+    return 0;
+}
 
 
 

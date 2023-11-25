@@ -136,7 +136,54 @@ int main() {
 }
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 zadatak6
+#include <stdio.h>
+#include <math.h>
 
+int fakt(int a) {
+
+	if (a == 0 || a == 1) {
+		return 1;
+	}
+	return a * fakt(a - 2);
+}
+int func(int a, int n) {
+	int kurac;
+	int ponavljanja = 0;
+	for (int i = 0; n > 0; i++)
+	{
+		kurac = n % 10;
+		if (a == kurac) {
+			ponavljanja++;
+		}
+		n /= 10;
+	}
+	return ponavljanja;
+}
+int main() {
+	double x, a,n = 0;
+	printf("unesi x: ");
+	scanf_s("%lf", &x);
+	printf("unesi a: ");
+	scanf_s("%lf", &a);
+
+	double suma = 0;
+	int brojit = 0;
+	for (int i = 0; i<1000; i++)
+	{
+		if (pow(x, 2 * n) / fakt(2 * n) > pow(10, -4)) {
+			brojit++;
+			n++;
+			suma += pow(-1, n) / fakt((2 * n)) * func(a, pow(n, 2)) * pow(x, 2 * n);
+			printf("suma: %lf", suma);
+		}
+		else { break; }
+
+	}
+	printf("suma: %lf", suma);
+	printf("brojit: %d", brojit);
+
+	return 0;
+}
 -----------------------------------------------------------------
 
 NEDELJA 5

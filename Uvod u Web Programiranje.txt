@@ -369,3 +369,149 @@ int main() {
     return 0;
 }
 ---------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_LENGTH 50
+
+int StringLength(char s[]) {
+    int i = 0;
+    while (s[i] != '\0') i++;
+    return i;
+}
+int HowManyDifferentChar(char str[]) {
+    int charCount[127];
+    for (int i = 0; i < 127; i++)
+        charCount[i] = 0;
+
+    int i = 0;
+    while (str[i] != '\0')
+        charCount[(int)str[i++]]++; //volim ovu liniju koda bas je slatka i efikasna :D
+
+    int n = 0;
+    for (int i = 0; i < 127; i++)
+        if (charCount[i] > 0)
+            n++;
+
+    return n;
+}
+bool Palandrome(char str[]) {
+    int n = StringLength(str);
+
+    int i = 0;
+    int j = n - 1;
+
+    while (i < j)
+    {
+        if (isspace(str[i])) {
+            i++;
+            continue;
+        }
+        if (isspace(str[j])) {
+            j--;
+            continue;
+        }
+
+        if (toupper(str[i]) != toupper(str[j])) return false;
+
+        i++;
+        j--;
+    }
+    return true;
+}
+void SwapStrings(char str1[], char str2[]) {
+    int n = StringLength(str2);
+    for (int i = 0; i <= n; i++) {
+        str1[i] = str2[i];
+    }
+}
+
+int main() {
+
+    //input
+
+    int n;
+    printf("Unesi broj stringova bajo: ");
+    scanf_s("%d", &n);
+
+    char strings[MAX_LENGTH][MAX_LENGTH];
+
+    for (int i = 0; i < n; i++) {
+        printf("Unesite string: ");
+        scanf_s("%s", strings[i], MAX_LENGTH);
+    }
+
+    //brojanje palindroma
+    int nPalandrome = 0;
+    for (int i = 0; i < n; i++) {
+        if (Palandrome(strings[i]))
+            nPalandrome++;
+    }
+
+    //odvajanje palindroma
+    int k = 0;
+    char** newStrings = (char**)malloc(n * sizeof(char*));
+    for (int i = 0; i < n; i++) {
+        newStrings[i] = (char*)malloc(MAX_LENGTH * sizeof(char));
+        if (Palandrome(strings[i]))
+        {
+            newStrings[k++] = strings[i];
+        }
+    }
+
+    //sortiranje po broju raz karaktera
+    for (int i = 0; i < nPalandrome; i++)
+    {
+        int max = i;
+        for (int j = i; j < nPalandrome; j++)
+        {
+            if (HowManyDifferentChar(newStrings[j]) > HowManyDifferentChar(newStrings[max]))
+                max = j;
+        }
+
+        char temp[MAX_LENGTH];
+        SwapStrings(temp, newStrings[i]);
+        SwapStrings(newStrings[i], newStrings[max]);
+        SwapStrings(newStrings[max], temp);
+    }
+
+    //spajanje stringova
+    char bigstr[MAX_LENGTH];
+    int count = 0;
+    for (int i = 0; i < nPalandrome; i++) {
+        int p = 0;
+        while (newStrings[i][p] != '\0')
+        {
+            bigstr[count] = newStrings[i][p];
+            count++;
+            p++;
+        }
+    }
+    bigstr[count] = '\0';
+
+    //izbacivanje duplikata jednih za drugim
+
+    char bigstr2[MAX_LENGTH];
+
+    int v = 1;
+    int v_ = 1;
+    char lastChar = bigstr[0];
+    bigstr2[0] = lastChar;
+    while (bigstr[v] != '\0') {
+
+        if (lastChar != bigstr[v]) {
+            bigstr2[v_] = bigstr[v];
+            v_++;
+        }
+
+        lastChar = bigstr[v];
+        v++;
+    }
+    bigstr2[v_] = '\0';
+
+    //eto :D
+    printf("%s", bigstr2);
+
+    return 0;
+}

@@ -1,964 +1,267 @@
-#include <stdio.h>
-#include <math.h>
+#include<stdio.h>
 #include<stdlib.h>
-#include <ctype.h>
 
-#define MAX 100
-#pragma warning(disable : 4996)
+#define MAX_REDOVA 50
+#define MAX_KOLONA 50
+
 /*
-napisati funkciju koja pronalazi element 
-celobrojnog niza koji je po apsolutnoj vrednosti 
-najdalji vrednosti x (zadaje se) i njegov index. 
-Napisati funkciju koja uz pomoc te funkcije nalazi 
-element po apsolutnoj vrednosti najblizi vrednosti
-x u martici i "vraca" (preko reference ili pokazivaca) 
-njegove indekse vrste i kolone, dok vrednost samog elementa
-vraca kao vrednost poziva funkcije. Za bonus, vrednost x 
-ucitati kao argument komandne linije. U main funkciji ucitati 
-matricu celih brojeva iz fajla Matrix.txt koji je formatiran 
-na sledeci nacin: u prvom redu fajla nalaze se dva broja: 
-n i m koji predstavljaju broj redova i broj kolona matrice, 
-a u narednih n redova nalazi se po m celih brojeva. Fajl Matrix.txt 
-kreirati samostalno. Ispisati koji je element matrice najdalji vrednosti 
-x i na kojim indeksima se nalazi. Za bonus memoriju za matricu alocirati dinamicki
-
-
+5
+Svaki element matrice koji predstavlja maksimum svoje vrste i minimum svoje
+kolone naziva se sedlasta tačka. Pronaći sve sedlaste tačke u zadatoj matrici.
 */
-int tajelement;
-int njegovindex;
-int x;
-int nadjenn;
-int nadjenm;
 
-void nadjinajdalji(int niz[MAX],int n) {
-    int trenutanmax = 0;
-    int trenutanindex = 0;
-    int trenutantajbroj = 0;
 
-    for (int i = 0; i < n; i++)
-    {
-        if (abs(abs(niz[i]) - x) > trenutanmax) {
-            trenutanmax = abs(abs(niz[i]) - x);
-            trenutantajbroj = niz[i];
-            trenutanindex = i;
-        }
 
-    }
+	int matrica[][MAX_KOLONA], 
+	int indeks_vrste, int br_kolona) {
 
-    tajelement = trenutantajbroj;
-    njegovindex = trenutanindex;    
+	int indeks_maksimuma = 0;
+	int maksimum = matrica[indeks_vrste][0];
+
+	for (int j = 1; j < br_kolona; j++) {
+		if (matrica[indeks_vrste][j] > maksimum) {
+			maksimum = matrica[indeks_vrste][j];
+			indeks_maksimuma = j;
+		}
+	}
+	return indeks_maksimuma;
 }
 
-void nadjinajblizi(int matrica[MAX][MAX], int n, int m) {
-    int trenutanmin = 0;
-    int trenutann = 0;
-    int trenutanm = 0;
-    int trenutantajbroj = 0;
+int indeksRedaMinimumaUKoloni(
+	int matrica[][MAX_KOLONA], 
+	int indeks_kolone, int br_redova) {
 
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            if (i == 0 && j == 0) {
-                trenutanmin = abs(abs(matrica[i][j]) - x);
-                trenutantajbroj = matrica[i][j];
-                trenutann = i;
-                trenutanm = j;
-            }
+	int minimum = matrica[0][indeks_kolone];
+	int indeks_minimuma = 0;
 
-            if (abs(abs(matrica[i][j]) - x) < trenutanmin) {
-                trenutanmin = abs(abs(matrica[i][j]) - x);
-                trenutantajbroj = matrica[i][j];
-                trenutann = i;
-                trenutanm = j;
-            }
-        }
-        
-    }
+	for (int i = 1; i < br_redova; i++) {
+		if (matrica[i][indeks_kolone] < minimum) {
+			minimum = matrica[i][indeks_kolone];
+			indeks_minimuma = i;
+		}
+	}
+	return indeks_minimuma;
+}
 
-    tajelement = trenutantajbroj;
-    nadjenn = trenutann;
-    nadjenm = trenutanm;
+bool sedlastaTacka(int matrica[][MAX_KOLONA], int n, int m, int i, int j) {
+	int indeks_maksimuma_vrste = indeksKoloneMaksimumaUVrsti(matrica, i, m);
+	int indeks_minimuma_kolone = indeksRedaMinimumaUKoloni(matrica, j, n);
+
+	return indeks_maksimuma_vrste == j && indeks_minimuma_kolone == i;
+}
+
+void ispisiSedlasteTacke(int matrica[][MAX_KOLONA], int n, int m) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (sedlastaTacka(matrica, n, m, i, j)) {
+				printf("Na mestu (%d, %d) je sedlasta tacka %d\n", i, j, matrica[i][j]);
+			}
+		}
+	}
 }
 
 int main() {
-    int niz[MAX]{};
-    int duzinaniza;
-
-    /*printf("unesi n duzinu niza: ");
-    scanf_s("%d", &duzinaniza);*/
-    printf("unesi x:");
-    scanf_s("%d", &x);
-    /*
-    for (int i = 0; i < duzinaniza; i++)
-    {
-        scanf_s("%d", &niz[i]);
-    }*/
-    //nadjinajdalji(niz, n);
-    //printf("%d,%d", tajelement, njegovindex);
-
-    FILE* f = fopen("Matrix.txt", "r");
-    if (f == NULL) {
-        printf("ERROR");
-        return 0;
-    }
-    int c;
-    int n=0, m=0;
-    int tempi = 0;
-    fscanf(f, "%d %d", &n, &m);
-    int matrica[MAX][MAX];
-
-    for (int i = 0; i < n; i++)
-    {
-
-        for (int j = 0; j < m; j++)
-        {
-            fscanf(f, "%d", &matrica[i][j]);
-        }
-    }
-
-    /*while ((c = fgetc(f)) != '\n') {
-        printf("\ndesilo se\n");
-        if (isspace(c)) continue;
-
-
-        /*if (tempi == 0) {
-            //n = c;
-            fscanf(f, "%d", &n);
-            tempi++;
-        }
-        else if (tempi == 1) {
-            fscanf(f, "%d", &m);
-        
-        }*/
-        //m = c;
-
-    //}
-    fclose(f);
-    nadjinajblizi(matrica, n, m);
-    printf("%d,%d", n, m);
-    for (int i = 0; i < n; i++)
-    {
-        printf("\n");
-        for (int j = 0; j < m; j++)
-        {
-            printf("%d ", matrica[i][j]);
-        }
-    }
-    printf("najblizi je %d %d %d",tajelement,nadjenn,nadjenm);
-
-
-
-
-    return 0;
+	int n = 4;
+	int m = 3;
+	int matrica[MAX_REDOVA][MAX_KOLONA];
+	unosMatrice(matrica, n, m);
+	ispisMatrice(matrica, n, m);
+	ispisiSedlasteTacke(matrica, n, m);
+	system("pause");
+	return 0;
 }
---------------------------------------------------------------------------------------------------------------------------
-
-Data je matrica Amn celih brojeva. Element a[i,j] je vrh ako je veći od svojih susednih elemenata koji su iznad, ispod, sa leve i sa desne strane. Visina vrha je razlika između elementa i njegovog najvišeg suseda. Napisati program koji će formirati niz vrhova sortiran u nerastući redosled po visini.
-
-#include <stdio.h>
-#include <limits.h>
-
-#define MAX_VELICINA 50
-
-bool validnoPolje(int i, int j, int n, int m) {
-    return (i >= 0 && i < n) && (j >= 0 && j < m);
-}
-
-int leviS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i, j - 1, n, m) ? mat[i][j - 1] : INT_MIN;
-}
-
-int desniS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i, j + 1, n, m) ? mat[i][j + 1] : INT_MIN;
-}
-
-int gornjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i - 1, j, n, m) ? mat[i - 1][j] : INT_MIN;
-}
-
-int donjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i + 1, j, n, m) ? mat[i + 1][j] : INT_MIN;
-}
-
-int najvisiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    int max = leviS(mat, i, j, n, m);
-    int sused = desniS(mat, i, j, n, m);
-    max = max > sused ? max : sused;
-    sused = gornjiS(mat, i, j, n, m);
-    max = max > sused ? max : sused;
-    sused = donjiS(mat, i, j, n, m);
-    max = max > sused ? max : sused;
-
-    return max;
-}
-
-int ako_je_dno_vraca_visinu(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    int najvisi = najvisiS(mat, i, j, n, m);
-    return mat[i][j] > najvisi ? mat[i][j] - najvisi : -1;
-}
-
-void swap(int* a, int* b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-
-    return;
-}
-
-void sortPoVisini(int* nizVrh, int* nizVisina, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (nizVisina[i] < nizVisina[j] || (nizVisina[i] == nizVisina[j] && nizVrh[i] < nizVrh[j])) {
-                swap(&nizVisina[i], &nizVisina[j]);
-                swap(&nizVrh[i], &nizVrh[j]);
-            }
-        }
-    }
-
-    return;
-}
-
-void f(int mat[][MAX_VELICINA], int n, int m, int* nizVrh, int& nNiz) {
-    int nizVisina[MAX_VELICINA];
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            int vrh = ako_je_dno_vraca_visinu(mat, i, j, n, m);
-            if (vrh > -1) {
-                nizVrh[nNiz] = mat[i][j];
-                nizVisina[nNiz] = vrh;
-                nNiz++;
-            }
-        }
-    }
-
-    sortPoVisini(nizVrh, nizVisina, nNiz);
-
-    return;
-}
-
-
-int main() {
-    int mat[][MAX_VELICINA] = {
-        {5, 2, 3},
-        {4, 15, 6},
-        {7, 8, 9}
-    };
-    int n = 3;
-    int m = 3;
-
-    int niz[MAX_VELICINA];
-    int nNiz = 0;
-
-    f(mat, n, n, niz, nNiz);
-
-    for (int i = 0; i < nNiz; i++) {
-        printf("%d ", niz[i]);
-    }
-
-    return 0;
-}
-
-
---------------------------------------------------------------------------------------------------------------------------
-
-Data je matrica A m  n celih brojeva. Element a i j ] je dno ako je manji od svojih susednih
-elemenata koji su iznad, ispod, sa leve i sa desne strane. Dubina dna je razlika između
-elementa i njegovog najvišeg suseda. Napisati program koji će formirati niz dna sortiran u
-ne opadajući redosled po dubini
-
-#include <stdio.h>
-#include <limits.h>
-
-#define MAX_VELICINA 50
-
-bool validnoPolje(int i, int j, int n, int m) {
-    return (i >= 0 && i < n) && (j >= 0 && j < m);
-}
-
-int leviS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i, j - 1, n, m) ? mat[i][j - 1] : INT_MAX;
-}
-
-int desniS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i, j + 1, n, m) ? mat[i][j + 1] : INT_MAX;
-}
-
-int gornjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i - 1, j, n, m) ? mat[i - 1][j] : INT_MAX;
-}
-
-int donjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    return validnoPolje(i + 1, j, n, m) ? mat[i + 1][j] : INT_MAX;
-}
-
-int najniziS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    int min = leviS(mat, i, j, n, m);
-    int sused = desniS(mat, i, j, n, m);
-    min = min < sused ? min : sused;
-    sused = gornjiS(mat, i, j, n, m);
-    min = min < sused ? min : sused;
-    sused = donjiS(mat, i, j, n, m);
-    min = min < sused ? min : sused;
-
-    return min;
-}
-
-int ako_je_dno_vraca_visinu(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
-    int najnizi = najniziS(mat, i, j, n, m);
-    return mat[i][j] < najnizi ? mat[i][j] - najnizi : 1;
-}
-
-void swap(int* a, int* b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-
-    return;
-}
-
-void sortPoDubini(int* nizDno, int* nizDubina, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (nizDubina[i] > nizDubina[j] || (nizDubina[i] == nizDubina[j] && nizDno[i] > nizDno[j])) {
-                swap(&nizDubina[i], &nizDubina[j]);
-                swap(&nizDno[i], &nizDno[j]);
-            }
-        }
-    }
-
-    return;
-}
-
-void f(int mat[][MAX_VELICINA], int n, int m, int* nizDno, int& nNiz) {
-    int nizDubina[MAX_VELICINA];
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            int dno = ako_je_dno_vraca_visinu(mat, i, j, n, m);
-            if (dno < 1) {
-                nizDno[nNiz] = mat[i][j];
-                nizDubina[nNiz] = dno;
-                nNiz++;
-            }
-        }
-    }
-
-    sortPoDubini(nizDno, nizDubina, nNiz);
-
-    return;
-}
-
-
-int main() {
-    int mat[][MAX_VELICINA] = {
-        {5, 2, 3},
-        {4, 15, 6},
-        {7, 8, 9}
-    };
-    int n = 3;
-    int m = 3;
-
-    int niz[MAX_VELICINA];
-    int nNiz = 0;
-
-    f(mat, n, n, niz, nNiz);
-
-    for (int i = 0; i < nNiz; i++) {
-        printf("%d ", niz[i]);
-    }
-
-    return 0;
-}
-
----------------------------------------------------------------------------------------------------------------------
-
-Napisati funkciju koja proverava da li je prosleđena kvadratna matrica simetrična (simetrične
-matrice 𝐴 su one za koje važi 𝐴 𝐴 𝑇 . Prilikom rešenja se ne mora vršiti transponovanje
-matrice).
-
-#include <stdio.h>
-
-
-
-bool simetricna(int mat[][3], int n, int m) {
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            if (mat[i][j] != mat[j][i])
-                return false;
-        }
-    }
-
-    return true;
-}
-
-int main() {
-    int mat[][3] = {
-        {1, 1, 5},
-        {1, 2, 3},
-        {5, 3, 4}
-    };
-    int n = sizeof(mat) / sizeof(mat[0]);
-    int m = 3;
-
-    printf(simetricna(mat, n, m) ? "true" : "false");
-
-    return 0;
-}
-
-----------------------------------------------------------------------------------------------------------------------------
-Dat je niz 𝑎 od 𝑘 elemenata. Napisati funkciju koja će popuniti matricu formata 𝑛 𝑥 𝑚
-elementima niza 𝑎 (elemente niza uzimati od poslednjeg ka prvom) krećući se na način
-ilustrovan primerom. Kada upotrebimo sve elemente niza 𝑎 , uzeti ponovo elemente niza 𝑎 od
-kraja .
-Na primer,
-𝑘 5 𝑎 1 2 3 4 5 𝑛 2 𝑚 4 , potrebno je dobiti
-
-//D14N8
-#include <stdio.h>
-
-void popuniMat(int mat[][4], int n, int m, int* a, int k) {
-    int brN = n - 1, brM = m - 1, brK = 0;
-    int temp = 0;
-
-    while (n * m > temp) {
-        mat[brN][brM] = a[brK];
-        brM++;
-        brK++;
-        if (brM == m) {
-            brM = 0;
-            brN--;
-        }
-        if (brN < 0)
-            brN = n - 1;
-        if (brK == k)
-            brK = 0;
-        temp++;
-    }
-
-
-    return;
-}
-
-int main() {
-    int a[] = { 1, 2, 3, 4, 5 };
-    int k = sizeof(a) / sizeof(int);
-
-    int n = 2;
-    int m = 4;
-    int mat[2][4];
-
-    popuniMat(mat, n, m, a, k);
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    }
-
-    return 0;
-}
-
-----------------------------------------------------------------------------------------------------------------------------
-Dat je niz 𝑎 od 𝑘 elemenata. Napisati funkciju koja će popuniti matricu formata 𝑛 𝑥 𝑚
-elementima niza 𝑎 krećući se na način ilustrovan primerom. Kada upotrebimo sve elemente
-niza 𝑎 , uzeti ponovo elemente niza 𝑎 od početka.
-Na primer,
-𝑘 5 𝑎 1 2 3 4 5 𝑛 2 𝑚 4 , potrebno je dobiti
-
-//D13N8
-#include <stdio.h>
-
-void popuniMat(int mat[][4], int n, int m, int* a, int k) {
-    int brN = 0, brM = m - 1, brK = 0;
-
-    while (brM >= 0) {
-        mat[brN][brM] = a[brK];
-        brN++;
-        brK++;
-        if (brN == n) {
-            brN = 0;
-            brM--;
-        }
-        if (brK == k)
-            brK = 0;
-    }
-
-    return;
-}
-
-int main() {
-    int a[] = { 1, 2, 3, 4, 5 };
-    int k = sizeof(a) / sizeof(int);
-
-    int n = 2;
-    int m = 4;
-    int mat[2][4];
-
-    popuniMat(mat, n, m, a, k);
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    }
-
-    return 0;
-}
-
-----------------------------------------------------------------------------------------------------------------------------
-Napisati funkciju koja ispisuje sve elemente matrice koji su minimumi i u svojoj vrsti i u
-svojoj koloni.
-
-#include <stdio.h>
-
-#define MAX_VELICINA 50
-
-int minR(int* red, int n) {
-    int min = red[0];
-    for (int i = 1; i < n; i++) {
-        if (min > red[i])
-            min = red[i];
-    }
-
-    return min;
-}
-
-int minK(int mat[][MAX_VELICINA], int j, int n) {
-    int min = mat[0][j];
-    for (int i = 1; i < n; i++) {
-        if (min > mat[i][j])
-            min = mat[i][j];
-    }
-
-    return min;
-}
-
-void minRiK(int mat[][MAX_VELICINA], int nK, int nR) {
-    for (int i = 0; i < nK; i++) {
-        for (int j = 0; j < nR; j++) {
-            int minr = minR(mat[i], nR); int mink = minK(mat, j, nK);
-            if (minr == mink && minr == mat[i][j])
-                printf("%d ", mat[i][j]);
-        }
-    }
-
-
-    return;
-}
-
-int main() {
-    int mat[][MAX_VELICINA] = {
-        { 2, 1, 7 },
-        { 3, 7, 2 },
-        { 5, 4, 9 }
-    };
-    int nK = sizeof(mat) / sizeof(mat[0]);
-    int nR = 3;
-
-    minRiK(mat, nK, nR);
-
-    return 0;
-}
-
-----------------------------------------------------------------------------------------------------------------------------
-
-
-#include <stdio.h>
-//D9N7
-#define MAX_VELICINA 100
-
-void f(int* niz, int* nizB, int n, int* br_el) {
-    int br = 0;
-    bool bio_u_niz = false;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < br + 1; j++) {
-            if (niz[i] == nizB[j]) {
-                bio_u_niz = false;
-                break;
-            }
-            bio_u_niz = true;
-        }
-        if (bio_u_niz) {
-            nizB[br] = niz[i];
-            bio_u_niz = false;
-            br++;
-        }
-    }
-    *br_el = br;
-
-    return;
-}
-
-int main() {
-    int niz[] = {1, 2, 10, 2, 6, 6, 2, 3, 4, 5, 6, 6, 8, 8, 8, 7, 7, 7, 10, 2, 2, 6, 6 };
-    int n = sizeof(niz) / sizeof(int);
-    int nizB[MAX_VELICINA];
-    int br;
-
-    f(niz, nizB, n, &br);
-
-    for (int i = 0; i < br; i++) {
-        printf("%d ", nizB[i]);
-    }
-
-    return 0;
-}
----------------------------------------------------------------------------------------------------------
-#include <stdio.h>
-//D8N7
-#define MAX_VELICINA 100
-
-void razdvoji(int* niz, int n, int* nizP, int* nizN, int* brPa, int* brNe) {
-    int brP = 0;
-    int brN = 0;
-    for (int i = 0; i < n; i++) {
-        if (niz[i] % 2 == 0) {
-            nizP[brP] = niz[i];
-            brP++;
-            continue;
-        }
-        nizN[brN] = niz[i];
-        brN++;
-    }
-    *brPa = brP;
-    *brNe = brN;
-
-    return;
-}
-
-int main() {
-    int niz[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-    int nizP[MAX_VELICINA], nizN[MAX_VELICINA];
-    int n = sizeof(niz) / sizeof(int);
-    int brP, brN;
-
-    razdvoji(niz, n, nizP, nizN, &brP, &brN);
-
-    for (int i = 0; i < brP; i++) {
-        printf("%d ", nizP[i]);
-    }
-    printf("\n\n\n");
-    for (int i = 0; i < brN; i++) {
-        printf("%d ", nizN[i]);
-    }
-
-    return 0;
-}
----------------------------------------------------------------------------------------------------------------
-
-#include <stdio.h>
-#include <math.h>
-//D6N7
-void swap(int* niz, int i, int j) {
-    int temp = niz[i];
-    niz[i] = niz[j];
-    niz[j] = temp;
-    return;
-}
-
-void sort(int* niz, int n, int x) {
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            int a = abs(niz[i] - x);
-            int b = abs(niz[j] - x);
-            if (a < b) swap(niz, i, j);
-            if (a == b && niz[i] < niz[j]) swap(niz, i, j);
-        }
-    }
-    return;
-}
-
-int main() {
-    int niz[] = { 11, 3, 8, 6, 7, 9, 5, 10, 10 };
-    int x = 7;
-    int n = sizeof(niz) / sizeof(int);
-
-    sort(niz, n, x);
-
-    for (int i = 0; i < n; i++) {
-        printf("%d ", niz[i]);
-    }
-
-    return 0;
-}
------------------------------------------------------------------------------------------------------------------
-Napisati program koji od niza stringova izdvaja one koji su palindromi (razmaci i razlika
-između malih i velikih slova se zanemaruju), sortira ih rastuće po broju različitih
-karaktera koji se u njem u javljaju i zatim spaja u jedan string. Na kraju, iz tako dobijenog
-stringa izbaciti sva uz a stopna pojavljivanja istog karaktera.
-
-//zadatak 8
+-----------------------------------------------------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <cstring>
+#include <math.h>
 
-#define MAX_LENGTH 50
+#pragma warning(disable: 4996)
 
-int StringLength(char s[]) {
-    int i = 0;
-    while (s[i] != '\0') i++;
-    return i;
-}
-int HowManyDifferentChar(char str[]) {
-    int charCount[127];
-    for (int i = 0; i < 127; i++)
-        charCount[i] = 0;
-
-    int i = 0;
-    while (str[i] != '\0')
-        charCount[(int)str[i++]]++; //volim ovu liniju koda bas je slatka i efikasna :D
-
-    int n = 0;
-    for (int i = 0; i < 127; i++)
-        if (charCount[i] > 0)
-            n++;
-
-    return n;
-}
-bool Palandrome(char str[]) {
-    int n = StringLength(str);
-
-    int i = 0;
-    int j = n - 1;
-
-    while (i < j)
-    {
-        if (isspace(str[i])) {
-            i++;
-            continue;
-        }
-        if (isspace(str[j])) {
-            j--;
-            continue;
-        }
-
-        if (toupper(str[i]) != toupper(str[j])) return false;
-
-        i++;
-        j--;
-    }
-    return true;
-}
-void SwapStrings(char str1[], char str2[]) {
-    int n = StringLength(str2);
-    for (int i = 0; i <= n; i++) {
-        str1[i] = str2[i];
-    }
-}
-
-int main() {
-
-    //input
-
-    int n;
-    printf("Unesi broj stringova bajo: ");
-    scanf_s("%d", &n);
-
-    char strings[MAX_LENGTH][MAX_LENGTH];
-
-    for (int i = 0; i < n; i++) {
-        printf("Unesite string: ");
-        scanf_s("%s", strings[i], MAX_LENGTH);
-    }
-
-    //brojanje palindroma
-    int nPalandrome = 0;
-    for (int i = 0; i < n; i++) {
-        if (Palandrome(strings[i]))
-            nPalandrome++;
-    }
-
-    //odvajanje palindroma
-    int k = 0;
-    char** newStrings = (char**)malloc(n * sizeof(char*));
-    for (int i = 0; i < n; i++) {
-        newStrings[i] = (char*)malloc(MAX_LENGTH * sizeof(char));
-        if (Palandrome(strings[i]))
-        {
-            newStrings[k++] = strings[i];
-        }
-    }
-
-    //sortiranje po broju raz karaktera
-    for (int i = 0; i < nPalandrome; i++)
-    {
-        int max = i;
-        for (int j = i; j < nPalandrome; j++)
-        {
-            if (HowManyDifferentChar(newStrings[j]) > HowManyDifferentChar(newStrings[max]))
-                max = j;
-        }
-
-        char temp[MAX_LENGTH];
-        SwapStrings(temp, newStrings[i]);
-        SwapStrings(newStrings[i], newStrings[max]);
-        SwapStrings(newStrings[max], temp);
-    }
-
-    //spajanje stringova
-    char bigstr[MAX_LENGTH];
-    int count = 0;
-    for (int i = 0; i < nPalandrome; i++) {
-        int p = 0;
-        while (newStrings[i][p] != '\0')
-        {
-            bigstr[count] = newStrings[i][p];
-            count++;
-            p++;
-        }
-    }
-    bigstr[count] = '\0';
-
-    //izbacivanje duplikata jednih za drugim
-
-    char bigstr2[MAX_LENGTH];
-
-    int v = 1;
-    int v_ = 1;
-    char lastChar = bigstr[0];
-    bigstr2[0] = lastChar;
-    while (bigstr[v] != '\0') {
-
-        if (lastChar != bigstr[v]) {
-            bigstr2[v_] = bigstr[v];
-            v_++;
-        }
-
-        lastChar = bigstr[v];
-        v++;
-    }
-    bigstr2[v_] = '\0';
-
-    //eto :D
-    printf("%s", bigstr2);
-
-    return 0;
-}
-
---------------------------------------------------------------------------------------------------------------
-
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-/*
-Napisati program koji čita podatke o studentima iz datoteke Ulaz.txt i 
-ispisuje ih u sortiranom redosledu po broju poena. 
-Studente sa jednakim brojem poena porediti leksikografski po imenu i prezimenu.
-*/
-
-#define MAX_VELICINA 50
-#pragma warning(disable : 4996)
-
-typedef struct Student {
-	char ime[50];
-	char prezime[50];
-	int br_bodova;
-} Student;
-
-int uporedi_studente(Student s1, Student s2) {
-	if (s1.br_bodova < s2.br_bodova) return -1;
-	if (s1.br_bodova > s2.br_bodova) return 1;
-	if (strcmp(s1.ime, s2.ime) != 0) return strcmp(s1.ime, s2.ime);
-	return strcmp(s1.prezime, s2.prezime);
-}
-
-void stampaj_studenta(Student s) {
-	printf("%s %s %d\n", s.ime, s.prezime, s.br_bodova);
-}
-
-int main() {
-	FILE* ulaz = fopen("ulaz.txt", "r");
-	if (!ulaz) { printf("Ne postoji fajl!"); return 0; }
-
-	Student studenti[MAX_VELICINA];
+bool palindrom(char* str1) {
 	int i = 0;
-	while (!feof(ulaz)) {
-		char ime[MAX_VELICINA];
-		char prezime[MAX_VELICINA];
-		int br_bodova;
-		int br_ucitanih = fscanf(ulaz, "%s%s%d", ime, prezime, &br_bodova);
-		if (br_ucitanih == 3) {
-			Student s;
-			strcpy(s.ime, ime);
-			strcpy(s.prezime, prezime);
-			s.br_bodova = br_bodova;
-			studenti[i++] = s;
+	int j = strlen(str1);
+	for (i; i <= j; i++) {
+		while (true) {
+			if (isspace(str1[i])) i++;
+			else if (isspace(str1[j])) j--;
+			else break;
+		}
+		if (i <= j) {
+			if (!(tolower(str1[i]) == tolower(str1[j]))) return false;
+		}
+		j--;
+	}
+	return true;
+}
+
+void unos_stringa(char* str) {
+	int i = 0;
+	while (true) {
+		scanf_s("%c", &str[i]);
+		if (str[i] == '\n') break;
+		i++;
+	}
+	str[i + 1] = '\0';
+}
+
+int main() {
+	int br;
+	char* niz[100];
+	char izlaz1[100];
+	char izlaz2[100];
+	printf("Unesite broj stringova koji zelite da unesete: \n");
+	scanf_s("%d", &br);
+	for (int i = 0; i < br; i++) {
+		printf("Unesite %d. string \n", i+1);
+		unos_stringa(niz[i]);
+	}
+	for (int i = 0; i < br; i++) {
+		if (palindrom(niz[i])) {
+			strcat(izlaz1, niz[i]);
 		}
 	}
-	fclose(ulaz);
-	int br_studenata = i;
-	
-	for (int i = 0; i < br_studenata; i++) {
-		for (int j = i + 1; j < br_studenata; j++) {
-			if (uporedi_studente(studenti[j], studenti[i]) == -1) {
-				Student tmp = studenti[j];
-				studenti[j] = studenti[i];
-				studenti[i] = tmp;
+	int j = 0;
+	for (int i = 0; i < strlen(izlaz1); i++) {
+		if (izlaz1[i] == izlaz1[i + 1]) continue;
+		izlaz2[j++] = izlaz1[i];
+	}
+	system("pause");
+}
+-------------------------------------------------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <cstring>
+
+#pragma warning(disable:4996)
+
+int brSlova(char *string) {
+	int br = 0;
+	while (*string != '\0') {
+		string++;
+	}
+
+	return br;
+}
+
+int brPojavljivanjeSlova(char *string, char x) {
+	int br = 0;
+	if (isupper(x)) x = tolower(x);
+	while (*string != '\0') {
+		if (isalpha(*string)) {
+			if (tolower(*string) == x)
+			br++;
+		}
+		string++;
+	}
+
+	return br;
+}
+
+void swap(char *str1, char *str2) {
+	char temp[150];
+	strcpy(temp, str1);
+	strcpy(str1, str2);
+	strcpy(str2, temp);
+}
+
+int main() {
+	char x;
+	printf("Unesi x: ");
+	scanf_s("%c", &x, 1);
+
+	FILE* ulaz = fopen("ulaz.txt", "r");
+	if (ulaz == NULL) { printf("Nije nadjen file"); return 0; }
+
+	char rec[150];
+	char stringovi[50][150];
+
+	int brStr = 0;
+
+	while (!feof(ulaz)) {
+		fscanf(ulaz, "%s", rec);
+		strcpy(stringovi[brStr], rec);
+		brStr++;
+	}
+
+	for (int i = 0; i < brStr; i++) {
+		for (int j = i + 1; j < brStr; j++) {
+			int brP1 = brPojavljivanjeSlova(stringovi[i], x);
+			int brP2 = brPojavljivanjeSlova(stringovi[j], x);
+			if (brP1 < brP2)
+				swap(stringovi[i], stringovi[j]);
+			if (brP1 == brP2) {
+				if (brSlova(stringovi[i]) < brSlova(stringovi[j]))
+					swap(stringovi[i], stringovi[j]);
 			}
 		}
 	}
 
-	for (int i = 0; i < br_studenata; i++) {
-		stampaj_studenta(studenti[i]);
+	FILE* izlaz = fopen("izlaz.txt", "w");
+
+	fprintf(izlaz, "x = %c\n", x);
+	for (int i = 0; i < brStr; i++) {
+		fprintf(izlaz, "%s\n", stringovi[i]);
 	}
 
+	fcloseall();
 	system("pause");
 	return 0;
 }
+--------------------------------------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
 
+struct Datum {
+    int d;
+    int m;
+    int g;
+} Datum;
 
+void Prethodni(struct Datum* d) {
+    int dan = d->d;
+    int mesec = d->m;
+    int godina = d->g;
 
+    if (dan == 1 && mesec == 1) {
+        dan = 31;
+        mesec = 12;
+        godina--;
+    }
+    
+    else if (dan == 1) {
+        if (mesec == 3) {
+            if ((godina % 4 == 0 && godina % 100 != 0) || (godina % 400 == 0))
+                dan = 29;
+            else
+                dan = 28;
+        }
+        else if (mesec == 2 || mesec == 4 || mesec == 6 || mesec == 9 || mesec == 11)
+            dan = 31;
+        else
+            dan = 30;
+        mesec--;
+    }
 
+    else
+        dan--;
 
+    d->d = dan;
+    d->m = mesec;
+    d->g = godina;
+}
 
+int main() {
+    struct Datum datum;
 
+    printf("Unesite datum u formatu d.m.g.: ");
+    scanf_s("%d.%d.%d", &datum.d, &datum.m, &datum.g);
 
+    printf("\nUlaz: %d.%d.%d.\t", datum.d, datum.m, datum.g);
+    Prethodni(&datum);
+    printf("\tIzlaz: %d.%d.%d.\n", datum.d, datum.m, datum.g);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return 0;
+}

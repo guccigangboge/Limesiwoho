@@ -265,3 +265,107 @@ int main() {
 
     return 0;
 }
+--------------------------------------------------------------------
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_VELICINA 50
+
+bool validnoPolje(int i, int j, int n, int m) {
+    return (i >= 0 && i < n) && (j >= 0 && j < m);
+}
+
+int leviS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    return validnoPolje(i, j - 1, n, m) ? mat[i][j - 1] : INT_MIN;
+}
+
+int desniS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    return validnoPolje(i, j + 1, n, m) ? mat[i][j + 1] : INT_MIN;
+}
+
+int gornjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    return validnoPolje(i - 1, j, n, m) ? mat[i - 1][j] : INT_MIN;
+}
+
+int donjiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    return validnoPolje(i + 1, j, n, m) ? mat[i + 1][j] : INT_MIN;
+}
+
+int najvisiS(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    int max = leviS(mat, i, j, n, m);
+    int sused = desniS(mat, i, j, n, m);
+    max = max > sused ? max : sused;
+    sused = gornjiS(mat, i, j, n, m);
+    max = max > sused ? max : sused;
+    sused = donjiS(mat, i, j, n, m);
+    max = max > sused ? max : sused;
+
+    return max;
+}
+
+int ako_je_dno_vraca_visinu(int mat[][MAX_VELICINA], int i, int j, int n, int m) {
+    int najvisi = najvisiS(mat, i, j, n, m);
+    return mat[i][j] > najvisi ? mat[i][j] - najvisi : -1;
+}
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+
+    return;
+}
+
+void sortPoVisini(int* nizVrh, int* nizVisina, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (nizVisina[i] < nizVisina[j] || (nizVisina[i] == nizVisina[j] && nizVrh[i] < nizVrh[j])) {
+                swap(&nizVisina[i], &nizVisina[j]);
+                swap(&nizVrh[i], &nizVrh[j]);
+            }
+        }
+    }
+
+    return;
+}
+
+void f(int mat[][MAX_VELICINA], int n, int m, int* nizVrh, int& nNiz) {
+    int nizVisina[MAX_VELICINA];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            int vrh = ako_je_dno_vraca_visinu(mat, i, j, n, m);
+            if (vrh > -1) {
+                nizVrh[nNiz] = mat[i][j];
+                nizVisina[nNiz] = vrh;
+                nNiz++;
+            }
+        }
+    }
+
+    sortPoVisini(nizVrh, nizVisina, nNiz);
+
+    return;
+}
+
+
+int main() {
+    int mat[][MAX_VELICINA] = {
+        {5, 2, 3},
+        {4, 15, 6},
+        {7, 8, 9}
+    };
+    int n = 3;
+    int m = 3;
+
+    int niz[MAX_VELICINA];
+    int nNiz = 0;
+
+    f(mat, n, n, niz, nNiz);
+
+    for (int i = 0; i < nNiz; i++) {
+        printf("%d ", niz[i]);
+    }
+
+    return 0;
+}
+---------------------------
